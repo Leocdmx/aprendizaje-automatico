@@ -1,0 +1,234 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{amsmath}
+\usepackage{parskip} % Evitar sangría automática en nuevos párrafos
+\usepackage{tikz-cd} % Para diagramas de TikZ
+\usepackage{enumitem} % Para personalizar listas
+\usepackage{booktabs} % Para mejores tablas
+\usepackage{graphicx} % Para insertar imágenes
+
+\begin{document}
+
+%============================
+% Portada
+%============================
+\begin{center}
+    \Huge \textbf{Tarea 3} \\[1.5cm]
+    \Large \textbf{León Felipe Dueñas González} \\[0.5cm]
+    \large Posgrado en Ciencia e Ingeniería de la Computación - UNAM \\[0.5cm]
+    \large \texttt{Aprendizaje Automatizado} \\[0.5cm]
+    \large \texttt{lduenas@ciencias.unam.mx} \\[0.5cm]
+    \Large Abril 2025
+\end{center}
+
+\vspace{1cm}
+
+%============================
+% Ejercicio 1
+%============================
+\section*{Ejercicio 1}
+
+En una planta nuclear hay una alarma que se activa cuando un indicador de temperatura excede un umbral. El indicador mide la temperatura del núcleo. Considera las variables:
+
+\begin{itemize}
+    \item $A$: Alarma
+    \item $D_A$: Alarma defectuosa
+    \item $D_I$: Indicador defectuoso
+    \item $I$: Lectura del indicador
+    \item $T$: Temperatura real del núcleo
+\end{itemize}
+
+\subsection*{Descripción de las tareas}
+
+\begin{itemize}
+    \item Dibuja tres redes bayesianas válidas diferentes que capturen el comportamiento del proceso, incluyendo una que maximice las independencias condicionales con el menor número de arcos.
+    \item Escribe las distribuciones conjuntas correspondientes.
+    \item Calcula el número de valores necesarios para cada nodo y el total de cada red.
+\end{itemize}
+
+\vspace{0.5cm}
+
+\subsection*{Tipo de Datos de las Variables}
+
+\begin{itemize}
+    \item \textbf{$A$}: bool
+    \item \textbf{$I$}: int (0 a 99)
+    \item \textbf{$T$}: int (0 a 99)
+    \item \textbf{$D_A$}: bool
+    \item \textbf{$D_I$}: bool
+\end{itemize}
+
+\vspace{0.5cm}
+
+\subsection*{Modelo 1}
+
+\begin{center}
+\begin{tikzcd}[row sep=2cm, column sep=2.5cm, cells={circle, draw}]
+D_I \arrow[dr] & T \arrow[d] \arrow[dr] & D_A \arrow[d] \\
+               & I \arrow[r] & A
+\end{tikzcd}
+\end{center}
+
+\subsubsection*{Análisis de Arcos}
+
+\begin{itemize}
+    \item $D_I \to I$
+    \item $T \to I$
+    \item $T \to A$
+    \item $D_A \to A$
+    \item $I \to A$
+\end{itemize}
+\textbf{Total de arcos:} 5
+
+\subsubsection*{Interpretación}
+
+Modelo realista que incorpora múltiples factores que afectan a la activación de la alarma.
+
+\vspace{0.5cm}
+
+\subsection*{Modelo 2}
+
+\begin{center}
+\begin{tikzcd}[row sep=2cm, column sep=2.5cm, cells={circle, draw}]
+D_I \arrow[dr] & T \arrow[d] & D_A \arrow[d] \\
+               & I \arrow[r] & A
+\end{tikzcd}
+\end{center}
+
+\subsubsection*{Análisis de Arcos}
+
+\begin{itemize}
+    \item $D_I \to I$
+    \item $T \to I$
+    \item $D_A \to A$
+    \item $I \to A$
+\end{itemize}
+\textbf{Total de arcos:} 4
+
+\subsubsection*{Interpretación}
+
+Modelo más simple, asumiendo que $T$ influye en $A$ solo a través de $I$.
+
+\vspace{0.5cm}
+
+\subsection*{Modelo 3}
+
+\begin{center}
+\begin{tikzcd}[row sep=2cm, column sep=2.5cm, cells={circle, draw}]
+D_I & T \arrow[d] & D_A \arrow[d] \\
+    & I \arrow[r] & A
+\end{tikzcd}
+\end{center}
+
+\subsubsection*{Análisis de Arcos}
+
+\begin{itemize}
+    \item $T \to I$
+    \item $I \to A$
+    \item $D_A \to A$
+\end{itemize}
+\textbf{Total de arcos:} 3
+
+\subsubsection*{Interpretación}
+
+Modelo minimalista: captura el mayor número de independencias condicionales con el menor número de arcos.
+
+\vspace{1cm}
+
+\subsection*{Distribuciones Conjuntas}
+
+\textbf{Modelo 1:}
+\[
+P(D_I, T, D_A, I, A) = P(D_I) P(T) P(D_A) P(I \mid D_I, T) P(A \mid T, D_A, I)
+\]
+
+\textbf{Modelo 2:}
+\[
+P(D_I, T, D_A, I, A) = P(D_I) P(T) P(D_A) P(I \mid D_I, T) P(A \mid D_A, I)
+\]
+
+\textbf{Modelo 3:}
+\[
+P(T, D_A, I, A) = P(T) P(D_A) P(I \mid T) P(A \mid D_A, I)
+\]
+
+\vspace{1cm}
+
+\subsection*{Número de Valores Necesarios}
+
+Recordemos que:
+\begin{itemize}
+    \item Variables booleanas: 2 valores posibles.
+    \item Variables enteras ($T$, $I$): 100 valores posibles.
+\end{itemize}
+
+\vspace{0.5cm}
+
+\textbf{Red 1:}
+\[
+1 + 99 + 1 + (99 \times 200) + (1 \times 20000) = 39,\!901 \text{ valores}
+\]
+
+\textbf{Red 2:}
+\[
+1 + 99 + 1 + (99 \times 200) + (1 \times 200) = 20,\!101 \text{ valores}
+\]
+
+\textbf{Red 3:}
+\[
+99 + 1 + (99 \times 100) + (1 \times 200) = 10,\!200 \text{ valores}
+\]
+
+\vspace{1cm}
+
+%============================
+% Ejercicio 2
+%============================
+\section*{Ejercicio 2}
+
+Una clínica está interesada en el diagnóstico de enfermedades de pulmón. Las variables y su significado son:
+
+\begin{center}
+\begin{tabular}{cc}
+\toprule
+\textbf{Variable} & \textbf{Significado} \\
+\midrule
+$A$ & Visita a Asia \\
+$T$ & Tuberculosis \\
+$C$ & Cáncer de pulmón \\
+$O$ & Tuberculosis o Cáncer \\
+$F$ & Fumador \\
+$X$ & Prueba rayos X positiva \\
+$B$ & Bronquitis \\
+$D$ & Disnea \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\vspace{0.5cm}
+
+\subsection*{Análisis de Independencias}
+
+\begin{enumerate}[label=\alph*)]
+    \item \textbf{$T \perp F \mid D$} \\
+    \textbf{Falso.} Hay un camino activo entre $T$ y $F$ a través de $O$ y $D$.
+
+    \item \textbf{$C \perp B \mid F$} \\
+    \textbf{Verdadero.} El camino $C \to F \to B$ queda bloqueado al condicionar en $F$.
+
+    \item \textbf{$A \perp F \mid C$} \\
+    \textbf{Verdadero.} Condicionar en $C$ bloquea la influencia entre $A$ y $F$.
+
+    \item \textbf{$A \perp F \mid \{C,D\}$} \\
+    \textbf{Falso.} La información de $D$ activa el camino $A \to T \to O \to D \to B \to F$.
+\end{enumerate}
+
+\vspace{0.5cm}
+
+\textbf{Nota:} Se aplica el \textit{criterio de d-separación} para cada caso.
+
+\vspace{1cm}
+
+
+\end{document}
